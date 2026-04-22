@@ -1,3 +1,3 @@
-export default function AdminPage() {
-  return <div>Admin Page</div>;
+export default function DashboardPage() {
+  return <div>Dashboard Page</div>;
 }
