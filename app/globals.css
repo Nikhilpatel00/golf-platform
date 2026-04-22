@@ -1,34 +1,78 @@
 @import "tailwindcss";
 
-/* Base styling */
+/* Base theme */
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
 body {
-  background-color: #020617;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ================= BUTTONS ================= */
+
+.btn-primary {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #dc2626, #991b1b);
   color: white;
-  font-family: system-ui, sans-serif;
-}
-
-/* Animations */
-.fade-in {
-  animation: fadeIn 0.8s ease-in-out;
-}
-
-.card-hover {
+  border-radius: 10px;
   transition: all 0.3s ease;
-}
-.card-hover:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  font-weight: 500;
 }
 
-.btn-glow {
-  transition: all 0.3s ease;
+.btn-primary:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
 }
-.btn-glow:hover {
+
+.btn-secondary {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f87171;
+  border-radius: 10px;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+
+.btn-secondary:hover {
+  background: rgba(220, 38, 38, 0.2);
+  color: white;
+  transform: scale(1.08);
+}
+
+/* ================= CARDS ================= */
+
+.card {
+  background: #111;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+.card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(255,0,0,0.6);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* ================= PLAYER ================= */
+
+.player-card {
+  display: flex;
+  justify-content: space-between;
+  background: #1f1f1f;
+  padding: 12px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+.player-card:hover {
+  background: #7f1d1d;
+}
+.btn-main {
+  @apply w-full text-center px-4 py-3 bg-red-600 text-white rounded-xl text-sm font-medium transition duration-300 shadow-lg;
+}
+
+.btn-main:hover {
+  @apply bg-red-700 scale-105;
 }
