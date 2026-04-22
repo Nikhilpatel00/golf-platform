@@ -1,3 +1,3 @@
-export async function POST() {
-  return Response.json({ message: "Signup route working" });
+export default function SignupPage() {
+  return <div>Signup Page</div>;
 }
