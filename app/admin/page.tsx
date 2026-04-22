@@ -2,12 +2,32 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
   const [players, setPlayers] = useState<any[]>([]);
   const [name, setName] = useState("");
   const [score, setScore] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+
+  /* ---------------- AUTH CHECK ---------------- */
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getUser();
+
+      if (!data.user) {
+        router.push("/login"); // 🔐 protect admin
+      } else {
+        fetchPlayers();
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+  }, []);
 
   /* ---------------- FETCH ---------------- */
   const fetchPlayers = async () => {
@@ -18,10 +38,6 @@ export default function AdminPage() {
 
     setPlayers(data || []);
   };
-
-  useEffect(() => {
-    fetchPlayers();
-  }, []);
 
   /* ---------------- ADD / UPDATE ---------------- */
   const savePlayer = async () => {
@@ -63,18 +79,41 @@ export default function AdminPage() {
     setEditId(p.id);
   };
 
+  /* ---------------- LOGOUT ---------------- */
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  /* ---------------- LOADING ---------------- */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white p-6">
 
-      {/* TITLE */}
-      <h1 className="text-3xl text-center text-red-500 mb-8 font-bold">
-        Admin Panel
-      </h1>
+      {/* HEADER */}
+      <div className="flex justify-between items-center max-w-xl mx-auto mb-8">
+        <h1 className="text-3xl text-red-500 font-bold">
+          Admin Panel
+        </h1>
+
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded"
+        >
+          Logout
+        </button>
+      </div>
 
       {/* ---------------- FORM ---------------- */}
       <div className="max-w-xl mx-auto bg-gray-900 p-6 rounded-xl mb-8 space-y-4">
 
-        {/* PLAYER NAME */}
         <input
           placeholder="Enter Player Name"
           value={name}
@@ -82,7 +121,6 @@ export default function AdminPage() {
           className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-red-500"
         />
 
-        {/* SCORE */}
         <input
           placeholder="Enter Score"
           type="number"
@@ -91,7 +129,6 @@ export default function AdminPage() {
           className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-red-500"
         />
 
-        {/* BUTTON */}
         <button
           onClick={savePlayer}
           className="w-full bg-red-600 hover:bg-red-700 transition p-3 rounded font-semibold"
@@ -99,7 +136,6 @@ export default function AdminPage() {
           {editId ? "Update Player" : "Add Player"}
         </button>
 
-        {/* CANCEL (ONLY IN EDIT) */}
         {editId && (
           <button
             onClick={() => {
@@ -122,16 +158,12 @@ export default function AdminPage() {
             key={p.id}
             className="bg-gray-900 p-4 rounded-lg flex justify-between items-center"
           >
-
-            {/* PLAYER DATA */}
             <div>
               <p className="font-semibold text-lg">{p.name}</p>
               <p className="text-gray-400">Score: {p.score}</p>
             </div>
 
-            {/* ACTIONS */}
             <div className="flex gap-2">
-
               <button
                 onClick={() => startEdit(p)}
                 className="px-4 py-1 border border-yellow-500 text-yellow-400 rounded hover:bg-yellow-500 hover:text-black transition"
@@ -145,9 +177,7 @@ export default function AdminPage() {
               >
                 Delete
               </button>
-
             </div>
-
           </div>
         ))}
 

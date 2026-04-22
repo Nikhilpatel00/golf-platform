@@ -1,52 +1,72 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function Login() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Enter email & password");
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      alert("Login failed ❌ " + error.message);
+      return;
+    }
+
+    // ✅ IMPORTANT: redirect after login
+    router.push("/admin");
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black text-white">
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
 
-      <div className="w-full max-w-md bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl shadow-2xl border border-gray-800 animate-fadeIn">
+      <div className="bg-gray-900 p-8 rounded-xl w-[350px] shadow-xl">
 
-        <h1 className="text-3xl font-bold text-center text-red-500 mb-6">
+        <h1 className="text-2xl text-center text-red-400 mb-6 font-bold">
           Login
         </h1>
 
-        {/* EMAIL */}
         <input
           type="email"
-          placeholder="Enter Email"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 rounded bg-gray-800 border border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500 outline-none transition"
+          className="w-full mb-3 p-3 rounded bg-gray-800 border border-gray-700 focus:border-red-500"
         />
 
-        {/* PASSWORD */}
         <input
           type="password"
-          placeholder="Enter Password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-6 rounded bg-gray-800 border border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500 outline-none transition"
+          className="w-full mb-4 p-3 rounded bg-gray-800 border border-gray-700 focus:border-red-500"
         />
 
-        {/* BUTTON */}
         <button
-          className="w-full bg-red-600 hover:bg-red-700 transform hover:scale-[1.03] transition duration-300 p-3 rounded font-semibold shadow-lg"
+          onClick={handleLogin}
+          className="w-full bg-red-600 hover:bg-red-700 p-3 rounded transition"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
-        {/* LINK */}
-        <p className="text-center text-gray-400 mt-4 text-sm">
-          Don’t have an account?{" "}
-          <a href="/signup" className="text-red-400 hover:underline">
-            Signup
-          </a>
-        </p>
       </div>
     </div>
   );
